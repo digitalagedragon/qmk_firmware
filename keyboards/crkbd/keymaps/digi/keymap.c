@@ -23,7 +23,9 @@ enum custom_keycodes {
   RAISE,
   ADJUST,
   BACKLIT,
-  RGBRST
+  RGBRST,
+  QC_TTYL,
+  QC_TTYR
 };
 
 enum macro_keycodes {
@@ -32,6 +34,7 @@ enum macro_keycodes {
 
 #define QC_DSKL LCTL(KC_LEFT)
 #define QC_DSKR LCTL(KC_RIGHT)
+#define QC_MCTL LCTL(KC_UP)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_QWERTY] = LAYOUT( \
@@ -51,11 +54,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                         KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_BSPC,\
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LALT, XXXXXXX, QC_DSKL, KC_PGDN, KC_PGUP, QC_DSKR,                      KC_LEFT, KC_DOWN,   KC_UP,KC_RIGHT, XXXXXXX, XXXXXXX,\
+      KC_LGUI, QC_MCTL, QC_DSKL, KC_PGDN, KC_PGUP, QC_DSKR,                      KC_LEFT, KC_DOWN,   KC_UP,KC_RIGHT, XXXXXXX, XXXXXXX,\
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT, KC_HOME, XXXXXXX, XXXXXXX,  KC_END, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,\
+      KC_LSFT, XXXXXXX, QC_TTYL, KC_HOME,  KC_END, QC_TTYR,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,\
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LCTL,   LOWER,  KC_ENT,     KC_SPC,   RAISE, KC_RGUI \
+                                          KC_LCTL,   LOWER,  KC_ENT,     KC_SPC,   RAISE, KC_RALT \
                                       //`--------------------------'  `--------------------------'
     ),
 
@@ -63,11 +66,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_ESC, KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC,                      KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_BSPC,\
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LALT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_MINS,  KC_EQL, KC_LCBR, KC_RCBR, KC_PIPE,  KC_GRV,\
+      KC_LGUI, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_MINS,  KC_EQL, KC_LCBR, KC_RCBR, KC_PIPE,  KC_GRV,\
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_UNDS, KC_PLUS, KC_LBRC, KC_RBRC, KC_BSLS, KC_TILD,\
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LCTL,   LOWER,  KC_ENT,     KC_SPC,   RAISE, KC_RGUI \
+                                          KC_LCTL,   LOWER,  KC_ENT,     KC_SPC,   RAISE, KC_RALT \
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -214,6 +217,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           RGB_current_mode = rgblight_config.mode;
         }
       #endif
+      break;
+    case QC_TTYL:
+      if (record->event.pressed)
+        SEND_STRING(SS_LCTL("q")"p");
+      break;
+    case QC_TTYR:
+      if (record->event.pressed)
+        SEND_STRING(SS_LCTL("q")"n");
       break;
   }
   return true;
